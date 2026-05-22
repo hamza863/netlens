@@ -62,7 +62,7 @@ afterEvaluate {
                 from(components["release"])
                 groupId    = "com.github.hamza863"
                 artifactId = "netlens"
-                version    = "1.0.6"
+                version    = "1.0.7"
                 pom {
                     name.set("NetLens")
                     description.set("Lightweight Android network logger — shake to inspect, zero DB overhead.")
