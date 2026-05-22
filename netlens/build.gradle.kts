@@ -49,16 +49,18 @@ dependencies {
 afterEvaluate {
     publishing {
         publications {
-            create<MavenPublication>("release") {
+            register<MavenPublication>("release") {
                 from(components["release"])
-                groupId    = "com.github.hamza863"
+
+                groupId = "com.github.hamza863"
                 artifactId = "netlens"
-                version    = "1.0.0"
+                version = "1.0.2"
 
                 pom {
                     name.set("NetLens")
                     description.set("Lightweight Android network logger — shake to inspect, zero DB overhead.")
                     url.set("https://github.com/hamza863/netlens")
+
                     licenses {
                         license {
                             name.set("Apache License 2.0")
