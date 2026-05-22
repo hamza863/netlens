@@ -1,7 +1,6 @@
 # NetLens 🔍
 
 [![](https://jitpack.io/v/hamza863/netlens.svg)](https://jitpack.io/#hamza863/netlens)
-[![Build](https://github.com/hamza863/netlens/actions/workflows/build.yml/badge.svg)](https://github.com/hamza863/netlens/actions)
 [![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg)](https://android-arsenal.com/api?level=21)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
