@@ -9,6 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.*
 import com.netlens.shake.ShakeDetector
 import com.netlens.ui.NetLensViewer
+import com.netlens.ui.NetLensOverlay
 
 /**
  *  ███╗   ██╗███████╗████████╗██╗     ███████╗███╗   ██╗███████╗
