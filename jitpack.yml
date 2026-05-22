@@ -1,6 +1,7 @@
 jdk:
   - openjdk21
 before_install:
+  - ./gradlew :netlens:publishToMavenLocal
   - sdk install java 21.0.5-zulu
   - sdk use java 21.0.5-zulu
   - curl -sL https://services.gradle.org/distributions/gradle-9.4.1-bin.zip -o /tmp/gradle.zip
