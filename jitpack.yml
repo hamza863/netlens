@@ -9,4 +9,4 @@ before_install:
   - df -h || true
 
 install:
-  - ./gradlew :netlens:publishReleasePublicationToMavenLocal :netlens-no-op:publishReleasePublicationToMavenLocal --no-daemon
+  - ./gradlew :netlens:publishToMavenLocal :netlens-no-op:publishToMavenLocal --no-daemon

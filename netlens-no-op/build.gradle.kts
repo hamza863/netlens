@@ -1,6 +1,8 @@
+import com.vanniktech.maven.publish.SonatypeHost
+
 plugins {
     alias(libs.plugins.android.library)
-    `maven-publish`
+    alias(libs.plugins.maven.publish)
 }
 
 android {
@@ -12,7 +14,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_21
     }
     kotlin { jvmToolchain(21) }
-    publishing { singleVariant("release") { withSourcesJar() } }
 }
 
 dependencies {
@@ -20,15 +21,39 @@ dependencies {
     compileOnly(libs.androidx.activity.compose)
 }
 
-afterEvaluate {
-    publishing {
-        publications {
-            register<MavenPublication>("release") {
-                from(components["release"])
-                groupId    = "com.github.hamza863.netlens"
-                artifactId = "netlens-no-op"
-                version    = "1.1.3"
+mavenPublishing {
+    coordinates("io.github.hamza863", "netlens-no-op", "1.1.3")
+
+    pom {
+        name.set("NetLens (no-op)")
+        description.set("No-op variant of NetLens for release builds — same API, does nothing.")
+        inceptionYear.set("2024")
+        url.set("https://github.com/hamza863/netlens")
+        licenses {
+            license {
+                name.set("The Apache License, Version 2.0")
+                url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
             }
         }
+        developers {
+            developer {
+                id.set("hamza863")
+                name.set("Hamza")
+                url.set("https://github.com/hamza863")
+            }
+        }
+        scm {
+            url.set("https://github.com/hamza863/netlens")
+            connection.set("scm:git:git://github.com/hamza863/netlens.git")
+            developerConnection.set("scm:git:ssh://git@github.com/hamza863/netlens.git")
+        }
+    }
+
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+
+    if (providers.gradleProperty("signingInMemoryKey").isPresent ||
+        providers.gradleProperty("signing.keyId").isPresent
+    ) {
+        signAllPublications()
     }
 }

@@ -1,7 +1,9 @@
+import com.vanniktech.maven.publish.SonatypeHost
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
-    `maven-publish`
+    alias(libs.plugins.maven.publish)
 }
 
 android {
@@ -31,12 +33,6 @@ android {
     kotlin {
         jvmToolchain(21)
     }
-
-    publishing {
-        singleVariant("release") {
-            withSourcesJar()
-        }
-    }
 }
 
 dependencies {
@@ -55,26 +51,42 @@ dependencies {
     testImplementation(libs.mockwebserver)
 }
 
-afterEvaluate {
-    publishing {
-        publications {
-            register<MavenPublication>("release") {
-                from(components["release"])
-                groupId    = "com.github.hamza863.netlens"
-                artifactId = "netlens"
-                version    = "1.1.3"
-                pom {
-                    name.set("NetLens")
-                    description.set("Lightweight Android network logger — shake to inspect, zero DB overhead.")
-                    url.set("https://github.com/hamza863/netlens")
-                    licenses {
-                        license {
-                            name.set("Apache License 2.0")
-                            url.set("https://www.apache.org/licenses/LICENSE-2.0")
-                        }
-                    }
-                }
+mavenPublishing {
+    coordinates("io.github.hamza863", "netlens", "1.1.3")
+
+    pom {
+        name.set("NetLens")
+        description.set("Lightweight Android network logger — shake to inspect, zero DB overhead.")
+        inceptionYear.set("2024")
+        url.set("https://github.com/hamza863/netlens")
+        licenses {
+            license {
+                name.set("The Apache License, Version 2.0")
+                url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
             }
         }
+        developers {
+            developer {
+                id.set("hamza863")
+                name.set("Hamza")
+                url.set("https://github.com/hamza863")
+            }
+        }
+        scm {
+            url.set("https://github.com/hamza863/netlens")
+            connection.set("scm:git:git://github.com/hamza863/netlens.git")
+            developerConnection.set("scm:git:ssh://git@github.com/hamza863/netlens.git")
+        }
+    }
+
+    // Upload to the Central Portal (https://central.sonatype.com).
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+
+    // Only sign when a key is configured, so local/JitPack builds without a key
+    // (which only need publishToMavenLocal) don't fail.
+    if (providers.gradleProperty("signingInMemoryKey").isPresent ||
+        providers.gradleProperty("signing.keyId").isPresent
+    ) {
+        signAllPublications()
     }
 }
