@@ -13,13 +13,13 @@ import kotlin.math.sqrt
  *
  * @param context          Any context (activity/application).
  * @param threshold        G-force above Earth gravity that counts as a shake. Default: 12f.
- * @param slopMs           Minimum milliseconds between two shake events. Default: 500ms.
+ * @param slopMs           Minimum milliseconds between two shake events. Default: 1000ms.
  * @param onShake          Callback invoked on the main thread when a shake is detected.
  */
 class ShakeDetector(
     context: Context,
     private val threshold: Float = 12f,
-    private val slopMs: Long     = 500L,
+    private val slopMs: Long     = 1000L,
     private val onShake: () -> Unit
 ) : SensorEventListener {
 

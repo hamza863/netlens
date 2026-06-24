@@ -14,7 +14,17 @@ import androidx.savedstate.setViewTreeSavedStateRegistryOwner
  */
 internal object NetLensOverlay {
 
+    /**
+     * Reference to the currently visible dialog. Guards against the viewer
+     * opening twice when two shake events (or two activities) fire in quick
+     * succession.
+     */
+    private var current: Dialog? = null
+
     fun show(activity: ComponentActivity) {
+
+        // Already showing? Ignore the duplicate request.
+        if (current?.isShowing == true) return
 
         val dialog = Dialog(
             activity,
@@ -49,6 +59,8 @@ internal object NetLensOverlay {
         }
 
         dialog.setContentView(composeView)
+        dialog.setOnDismissListener { if (current === dialog) current = null }
+        current = dialog
         dialog.show()
     }
 }

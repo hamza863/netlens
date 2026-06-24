@@ -16,5 +16,6 @@ data class NetLensConfig(
     val shakeToOpen: Boolean  = true,
     val maxEntries: Int       = 200,
     val maxBodyBytes: Long    = 64 * 1024L,
-    val shakeThreshold: Float = 12f
+    val shakeThreshold: Float = 12f,
+    val showBubble: Boolean   = false
 )

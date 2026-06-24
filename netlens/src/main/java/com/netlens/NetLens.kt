@@ -8,6 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.*
 import com.netlens.shake.ShakeDetector
+import com.netlens.ui.NetLensBubble
 import com.netlens.ui.NetLensViewer
 import com.netlens.ui.NetLensOverlay
 
@@ -47,20 +48,34 @@ object NetLens {
 
         app.registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
             private val shakeDetectors = mutableMapOf<Activity, ShakeDetector>()
+            private val bubbles = mutableMapOf<Activity, NetLensBubble>()
 
             override fun onActivityCreated(activity: Activity, bundle: Bundle?) {}
             override fun onActivityStarted(activity: Activity) {}
 
             override fun onActivityResumed(activity: Activity) {
-                if (!config.shakeToOpen) return
                 if (activity !is ComponentActivity) return
-                shakeDetectors.getOrPut(activity) {
-                    ShakeDetector(activity) { show(activity) }
-                }.register()
+
+                if (config.shakeToOpen) {
+                    shakeDetectors.getOrPut(activity) {
+                        ShakeDetector(
+                            context = activity,
+                            threshold = config.shakeThreshold,
+                            onShake = { show(activity) }
+                        )
+                    }.register()
+                }
+
+                if (config.showBubble) {
+                    bubbles.getOrPut(activity) {
+                        NetLensBubble(activity) { show(activity) }
+                    }.attach()
+                }
             }
 
             override fun onActivityPaused(activity: Activity) {
                 shakeDetectors[activity]?.unregister()
+                bubbles[activity]?.detach()
             }
 
             override fun onActivityStopped(activity: Activity) {}
@@ -68,6 +83,7 @@ object NetLens {
 
             override fun onActivityDestroyed(activity: Activity) {
                 shakeDetectors.remove(activity)
+                bubbles.remove(activity)?.detach()
             }
         })
     }
@@ -99,5 +115,7 @@ data class NetLensConfig(
     val shakeToOpen: Boolean  = true,
     val maxEntries: Int       = 200,
     val maxBodyBytes: Long    = 64 * 1024L,
-    val shakeThreshold: Float = 12f
+    val shakeThreshold: Float = 12f,
+    /** Show a draggable floating button to open the viewer (handy on emulators). */
+    val showBubble: Boolean   = false
 )

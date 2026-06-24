@@ -185,7 +185,13 @@ class NetLensInterceptorTest {
 
     @Test
     fun `duration is captured and greater than zero`() {
-        server.enqueue(MockResponse().setBodyDelay(50, TimeUnit.MILLISECONDS).setResponseCode(200))
+        // Delay a non-empty body so the slow transfer is actually observed on the client.
+        server.enqueue(
+            MockResponse()
+                .setBodyDelay(50, TimeUnit.MILLISECONDS)
+                .setBody("""{"slow":true}""")
+                .setResponseCode(200)
+        )
 
         client.newCall(Request.Builder().url(server.url("/slow")).build()).execute()
 
