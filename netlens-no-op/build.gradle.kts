@@ -20,7 +20,7 @@ dependencies {
 }
 
 mavenPublishing {
-    coordinates("io.github.hamza863", "netlens-no-op", "1.1.3")
+    coordinates("io.github.hamza863", "netlens-no-op", providers.gradleProperty("VERSION_NAME").get())
 
     pom {
         name.set("NetLens (no-op)")

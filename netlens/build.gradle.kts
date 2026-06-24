@@ -50,7 +50,7 @@ dependencies {
 }
 
 mavenPublishing {
-    coordinates("io.github.hamza863", "netlens", "1.1.3")
+    coordinates("io.github.hamza863", "netlens", providers.gradleProperty("VERSION_NAME").get())
 
     pom {
         name.set("NetLens")

@@ -5,6 +5,15 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.4] - 2026-06-24
+
+Maintenance release — no functional or API changes.
+
+### Changed
+- Centralized the library version into a single `VERSION_NAME` property in
+  `gradle.properties` (both modules read it).
+- Releases are now published automatically via GitHub Actions on a `v*` tag.
+
 ## [1.1.3] - 2026-06-24
 
 ### Fixed
@@ -74,6 +83,7 @@ Packaging-only release — no library or API changes.
 - Entry ids are now unique, preventing Compose list key collisions when multiple
   calls were captured in the same millisecond.
 
+[1.1.4]: https://github.com/hamza863/netlens/releases/tag/v1.1.4
 [1.1.3]: https://github.com/hamza863/netlens/releases/tag/v1.1.3
 [1.1.2]: https://github.com/hamza863/netlens/releases/tag/v1.1.2
 [1.1.1]: https://github.com/hamza863/netlens/releases/tag/v1.1.1

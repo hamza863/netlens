@@ -65,8 +65,8 @@ dependencyResolutionManagement {
 
 ```kotlin
 dependencies {
-    debugImplementation("io.github.hamza863:netlens:1.1.3")
-    releaseImplementation("io.github.hamza863:netlens-no-op:1.1.3")
+    debugImplementation("io.github.hamza863:netlens:1.1.4")
+    releaseImplementation("io.github.hamza863:netlens-no-op:1.1.4")
 }
 ```
 
@@ -77,7 +77,7 @@ dependencies {
 
 ```toml
 [versions]
-netlens = "1.1.3"
+netlens = "1.1.4"
 
 [libraries]
 netlens      = { group = "io.github.hamza863", name = "netlens",       version.ref = "netlens" }
