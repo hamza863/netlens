@@ -60,9 +60,9 @@ afterEvaluate {
         publications {
             register<MavenPublication>("release") {
                 from(components["release"])
-                groupId    = "com.github.hamza863"
+                groupId    = "com.github.hamza863.netlens"
                 artifactId = "netlens"
-                version    = "1.1.1"
+                version    = "1.1.2"
                 pom {
                     name.set("NetLens")
                     description.set("Lightweight Android network logger — shake to inspect, zero DB overhead.")

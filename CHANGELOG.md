@@ -5,6 +5,20 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2] - 2026-06-24
+
+Packaging-only release — no library or API changes.
+
+### Changed
+- **Maven group ID is now `com.github.hamza863.netlens`** (was
+  `com.github.hamza863`). JitPack uses the `com.github.User.Repo` group for
+  multi-module projects, so once `netlens-no-op` is published alongside `netlens`
+  the coordinates change. Update your dependency notation:
+  - `com.github.hamza863.netlens:netlens:1.1.2`
+  - `com.github.hamza863.netlens:netlens-no-op:1.1.2`
+- The published Gradle module metadata now matches this group, so resolution no
+  longer fails with a coordinate-mismatch error.
+
 ## [1.1.1] - 2026-06-24
 
 Packaging-only release — no library or API changes.
@@ -50,5 +64,6 @@ Packaging-only release — no library or API changes.
 - Entry ids are now unique, preventing Compose list key collisions when multiple
   calls were captured in the same millisecond.
 
+[1.1.2]: https://github.com/hamza863/netlens/releases/tag/v1.1.2
 [1.1.1]: https://github.com/hamza863/netlens/releases/tag/v1.1.1
 [1.1.0]: https://github.com/hamza863/netlens/releases/tag/v1.1.0

@@ -25,9 +25,9 @@ afterEvaluate {
         publications {
             register<MavenPublication>("release") {
                 from(components["release"])
-                groupId    = "com.github.hamza863"
+                groupId    = "com.github.hamza863.netlens"
                 artifactId = "netlens-no-op"
-                version    = "1.1.1"
+                version    = "1.1.2"
             }
         }
     }
