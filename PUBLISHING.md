@@ -78,7 +78,43 @@ builds without these properties (local dev, JitPack) still work.
 
 ---
 
-## Releasing a new version
+---
+
+## Recommended: automated, secret-free releases via GitHub Actions
+
+The most secure setup keeps **no secrets on any developer machine** — releases run
+in CI with secrets stored in GitHub. The workflow is at
+`.github/workflows/publish.yml` and triggers on a `v*` tag (or manually).
+
+Add these four **repository secrets** (GitHub → Settings → Secrets and variables →
+Actions → New repository secret):
+
+| Secret | Value |
+|--------|-------|
+| `MAVEN_CENTRAL_USERNAME` | Central Portal user-token username |
+| `MAVEN_CENTRAL_PASSWORD` | Central Portal user-token password |
+| `SIGNING_IN_MEMORY_KEY` | ASCII-armored **private** key (see below) |
+| `SIGNING_IN_MEMORY_KEY_PASSWORD` | your GPG passphrase |
+
+Export the in-memory key (paste the whole output as the secret value — multi-line
+is fine in GitHub secrets):
+
+```bash
+gpg --armor --export-secret-keys <KEY_ID>
+```
+
+Then release by pushing a tag:
+
+```bash
+git tag v1.2.0 && git push origin v1.2.0
+```
+
+CI builds, signs, and publishes automatically. This is the preferred path —
+prefer it over publishing from a laptop.
+
+---
+
+## Releasing a new version (local fallback)
 
 1. Bump the version in **both** `netlens/build.gradle.kts` and
    `netlens-no-op/build.gradle.kts` (`coordinates(..., "<new-version>")`),

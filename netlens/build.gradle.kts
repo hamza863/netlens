@@ -1,5 +1,3 @@
-import com.vanniktech.maven.publish.SonatypeHost
-
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
@@ -80,7 +78,7 @@ mavenPublishing {
     }
 
     // Upload to the Central Portal (https://central.sonatype.com).
-    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+    publishToMavenCentral()
 
     // Only sign when a key is configured, so local/JitPack builds without a key
     // (which only need publishToMavenLocal) don't fail.

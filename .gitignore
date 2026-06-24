@@ -14,3 +14,9 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Secrets — never commit signing keys or credentials
+*.gpg
+*.asc
+secring.gpg
+**/keystore*.properties
