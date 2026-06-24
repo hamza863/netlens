@@ -80,7 +80,7 @@ mavenPublishing {
     // Upload to the Central Portal (https://central.sonatype.com).
     publishToMavenCentral()
 
-    // Only sign when a key is configured, so local/JitPack builds without a key
+    // Only sign when a key is configured, so local builds without a key
     // (which only need publishToMavenLocal) don't fail.
     if (providers.gradleProperty("signingInMemoryKey").isPresent ||
         providers.gradleProperty("signing.keyId").isPresent

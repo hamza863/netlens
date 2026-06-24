@@ -74,7 +74,7 @@ export ORG_GRADLE_PROJECT_signingInMemoryKeyPassword=<your-gpg-key-passphrase>
 ```
 
 The build only calls `signAllPublications()` when a signing key is present, so
-builds without these properties (local dev, JitPack) still work.
+local builds without these properties (which only need `publishToMavenLocal`) still work.
 
 ---
 
@@ -137,10 +137,3 @@ prefer it over publishing from a laptop.
 
 > Versions on Central are **immutable** — you can't overwrite a published
 > version, so double-check before releasing.
-
----
-
-## JitPack (fallback)
-
-JitPack still works as a fallback via `jitpack.yml` (it builds from git tags).
-Once on Maven Central, prefer the `io.github.hamza863` coordinates above.
