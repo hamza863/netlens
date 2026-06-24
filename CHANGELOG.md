@@ -5,6 +5,16 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-06-24
+
+Packaging-only release — no library or API changes.
+
+### Fixed
+- Publish the `netlens-no-op` artifact on JitPack (it was missing from the 1.1.0
+  build, so `releaseImplementation(...netlens-no-op)` could not resolve).
+- Free disk space on the JitPack build runner to avoid intermittent
+  "No space left on device" failures during the Android SDK install.
+
 ## [1.1.0] - 2026-06-24
 
 ### Added
@@ -40,4 +50,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Entry ids are now unique, preventing Compose list key collisions when multiple
   calls were captured in the same millisecond.
 
+[1.1.1]: https://github.com/hamza863/netlens/releases/tag/v1.1.1
 [1.1.0]: https://github.com/hamza863/netlens/releases/tag/v1.1.0

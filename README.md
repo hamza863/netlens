@@ -65,8 +65,8 @@ dependencyResolutionManagement {
 
 ```kotlin
 dependencies {
-    debugImplementation("com.github.hamza863:netlens:1.1.0")
-    releaseImplementation("com.github.hamza863:netlens-no-op:1.1.0")
+    debugImplementation("com.github.hamza863:netlens:1.1.1")
+    releaseImplementation("com.github.hamza863:netlens-no-op:1.1.1")
 }
 ```
 
