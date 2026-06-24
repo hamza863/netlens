@@ -6,7 +6,7 @@
 
 Shake your device to inspect every API call in a clean, Compose-native bottom sheet — then copy it as cURL or export the whole session as HAR.
 
-[![JitPack](https://jitpack.io/v/hamza863/netlens.svg)](https://jitpack.io/#hamza863/netlens)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.hamza863/netlens.svg?label=Maven%20Central)](https://central.sonatype.com/artifact/io.github.hamza863/netlens)
 [![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg)](https://android-arsenal.com/api?level=21)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](#license)
 [![Compose](https://img.shields.io/badge/Jetpack%20Compose-100%25-4285F4.svg)](https://developer.android.com/jetpack/compose)
@@ -49,28 +49,45 @@ NetLens captures requests **in memory** and renders them with **Jetpack Compose*
 
 ## Install
 
-**1. Add JitPack** to `settings.gradle.kts`:
+NetLens is on **Maven Central**, so no extra repository is needed (`mavenCentral()`
+is already in most projects' `settings.gradle.kts`):
 
 ```kotlin
 dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url = uri("https://jitpack.io") }
     }
 }
 ```
 
-**2. Add the dependency** in your app's `build.gradle.kts` — the real library for debug, the no-op for release:
+**Add the dependency** in your app's `build.gradle.kts` — the real library for debug, the no-op for release:
 
 ```kotlin
 dependencies {
-    debugImplementation("com.github.hamza863.netlens:netlens:1.1.3")
-    releaseImplementation("com.github.hamza863.netlens:netlens-no-op:1.1.3")
+    debugImplementation("io.github.hamza863:netlens:1.1.3")
+    releaseImplementation("io.github.hamza863:netlens-no-op:1.1.3")
 }
 ```
 
 > The `no-op` artifact mirrors the public API but does nothing, so calls to NetLens are safe to leave in production code.
+
+<details>
+<summary>Using a version catalog (<code>libs.versions.toml</code>)</summary>
+
+```toml
+[versions]
+netlens = "1.1.3"
+
+[libraries]
+netlens      = { group = "io.github.hamza863", name = "netlens",       version.ref = "netlens" }
+netlens-noop = { group = "io.github.hamza863", name = "netlens-no-op", version.ref = "netlens" }
+```
+```kotlin
+debugImplementation(libs.netlens)
+releaseImplementation(libs.netlens.noop)
+```
+</details>
 
 ---
 
