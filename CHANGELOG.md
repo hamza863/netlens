@@ -5,6 +5,16 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.3] - 2026-06-24
+
+### Fixed
+- **Manifest merge conflict with apps/libraries that use `FileProvider`.** NetLens
+  registered the bare `androidx.core.content.FileProvider` class, which the manifest
+  merger keys by class name — colliding with the host app's provider and failing the
+  build with a duplicate-provider error. NetLens now registers its own
+  `NetLensFileProvider` subclass, so it merges cleanly and consumers need no
+  `tools:replace` or app-side workaround.
+
 ## [1.1.2] - 2026-06-24
 
 Packaging-only release — no library or API changes.
@@ -64,6 +74,7 @@ Packaging-only release — no library or API changes.
 - Entry ids are now unique, preventing Compose list key collisions when multiple
   calls were captured in the same millisecond.
 
+[1.1.3]: https://github.com/hamza863/netlens/releases/tag/v1.1.3
 [1.1.2]: https://github.com/hamza863/netlens/releases/tag/v1.1.2
 [1.1.1]: https://github.com/hamza863/netlens/releases/tag/v1.1.1
 [1.1.0]: https://github.com/hamza863/netlens/releases/tag/v1.1.0

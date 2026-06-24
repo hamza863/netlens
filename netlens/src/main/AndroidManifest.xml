@@ -4,7 +4,7 @@
     <application>
         <!-- Used to share exported .har files. Authority is namespaced per host app. -->
         <provider
-            android:name="androidx.core.content.FileProvider"
+            android:name="com.netlens.export.NetLensFileProvider"
             android:authorities="${applicationId}.netlens.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">

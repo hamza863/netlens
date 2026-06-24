@@ -27,7 +27,7 @@ afterEvaluate {
                 from(components["release"])
                 groupId    = "com.github.hamza863.netlens"
                 artifactId = "netlens-no-op"
-                version    = "1.1.2"
+                version    = "1.1.3"
             }
         }
     }
