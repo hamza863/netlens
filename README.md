@@ -159,28 +159,6 @@ Use the **search bar** and **filter chips** to narrow things down, and **Export*
 
 ---
 
-## Architecture
-
-NetLens is structured in clean, testable layers, with the viewer built on a unidirectional **MVI** flow:
-
-```
-com.netlens
-├── NetLens                 // public facade (install / interceptor / show / clear)
-├── interceptor/            // OkHttp Interceptor — captures calls, peeks bodies
-├── model/                  // NetworkLogEntry (domain model)
-├── NetworkLogStore         // thread-safe in-memory ring buffer (data source / SoT)
-├── presentation/           // MVI: NetLensState · NetLensIntent · NetLensViewModel
-├── export/                 // HarExporter · share helpers
-└── ui/                     // dumb Compose views, shake detector, floating bubble
-```
-
-- **State** (`NetLensState`) is immutable and the single source of truth.
-- **Intents** (`NetLensIntent`) describe every user action.
-- **`NetLensViewModel`** is the only place state changes, reducing intents against the store. It uses Compose snapshot state, so the MVI layer adds **zero extra dependencies**.
-- **Views** render state and emit intents — no business logic.
-
----
-
 ## Requirements
 
 - **minSdk 21+**

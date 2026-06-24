@@ -3,6 +3,10 @@ jdk:
 
 before_install:
   - chmod +x gradlew
+  # Free disk on the JitPack runner — NDK/emulator/system-images aren't needed to
+  # build a library and have caused "No space left on device" during SDK install.
+  - rm -rf /opt/android-sdk-linux/ndk /opt/android-sdk-linux/ndk-bundle /opt/android-sdk-linux/emulator /opt/android-sdk-linux/system-images "$ANDROID_HOME/ndk" "$ANDROID_HOME/ndk-bundle" "$ANDROID_HOME/emulator" "$ANDROID_HOME/system-images" || true
+  - df -h || true
 
 install:
-  - ./gradlew :netlens:publishReleasePublicationToMavenLocal
+  - ./gradlew :netlens:publishReleasePublicationToMavenLocal :netlens-no-op:publishReleasePublicationToMavenLocal --no-daemon
