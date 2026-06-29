@@ -5,6 +5,30 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-06-29
+
+### Added
+- **Collapsible JSON tree viewer** — JSON request/response bodies render as an
+  interactive, tap-to-expand tree (deeper levels start collapsed). A per-body
+  **Tree / Raw** toggle switches back to the pretty-printed text at any time.
+- **Header redaction for safe sharing** — sensitive header values
+  (`Authorization`, `Cookie`, `Set-Cookie`, API-key headers, …) are masked in
+  **cURL**, **HAR** and **shared/copied** output. The on-screen viewer still shows
+  real values. Configure the masked set with `NetLensConfig(redactHeaders = …)`.
+- **Searchable headers and bodies** — the search box now matches request/response
+  bodies and header names/values, not just URL/method/status.
+
+### Changed
+- **HAR export now populates `queryString` and `cookies`** — query parameters are
+  parsed from the URL and cookies from the `Cookie` / `Set-Cookie` headers, so the
+  Query and Cookies tabs are filled in Chrome DevTools / Charles / Proxyman
+  (sensitive cookie values are redacted).
+
+### Fixed
+- **Compressed response bodies render readable** — responses with
+  `Content-Encoding: gzip` or `deflate` (e.g. when the app sets `Accept-Encoding`
+  manually) are now decompressed before display instead of showing as binary.
+
 ## [1.1.4] - 2026-06-24
 
 Maintenance release — no functional or API changes.
@@ -83,6 +107,7 @@ Packaging-only release — no library or API changes.
 - Entry ids are now unique, preventing Compose list key collisions when multiple
   calls were captured in the same millisecond.
 
+[1.2.0]: https://github.com/hamza863/netlens/releases/tag/v1.2.0
 [1.1.4]: https://github.com/hamza863/netlens/releases/tag/v1.1.4
 [1.1.3]: https://github.com/hamza863/netlens/releases/tag/v1.1.3
 [1.1.2]: https://github.com/hamza863/netlens/releases/tag/v1.1.2

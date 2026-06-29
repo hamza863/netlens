@@ -7,6 +7,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.*
+import com.netlens.redact.Redactor
 import com.netlens.shake.ShakeDetector
 import com.netlens.ui.NetLensBubble
 import com.netlens.ui.NetLensViewer
@@ -45,6 +46,7 @@ object NetLens {
     fun install(app: Application, config: NetLensConfig = NetLensConfig()) {
         this.config = config
         NetworkLogStore.maxEntries = config.maxEntries
+        Redactor.headers = config.redactHeaders.map { it.lowercase() }.toSet()
 
         app.registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
             private val shakeDetectors = mutableMapOf<Activity, ShakeDetector>()
@@ -117,5 +119,10 @@ data class NetLensConfig(
     val maxBodyBytes: Long    = 64 * 1024L,
     val shakeThreshold: Float = 12f,
     /** Show a draggable floating button to open the viewer (handy on emulators). */
-    val showBubble: Boolean   = false
+    val showBubble: Boolean   = false,
+    /**
+     * Header names whose values are masked in cURL, HAR and shared/copied text
+     * (the on-screen viewer still shows real values). Matched case-insensitively.
+     */
+    val redactHeaders: Set<String> = Redactor.DEFAULT_HEADERS
 )

@@ -37,6 +37,7 @@ import com.netlens.presentation.LogFilter
 import com.netlens.presentation.NetLensIntent
 import com.netlens.presentation.NetLensState
 import com.netlens.presentation.NetLensViewModel
+import com.netlens.redact.Redactor
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.StringReader
@@ -444,15 +445,37 @@ private fun BodyBlock(label: String, body: String?, contentType: String?, size: 
     }
 
     val pretty = remember(body) { prettyBody(body, contentType) }
-    val isLarge = pretty.length > BODY_PREVIEW_LIMIT
-    var expanded by remember(body) { mutableStateOf(false) }
+    val parsedJson = remember(body) { parseJsonOrNull(body) }
+    var tree by remember(body) { mutableStateOf(true) }
 
     Spacer(Modifier.height(10.dp))
-    Text(label, fontSize = 11.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFF6B7280), modifier = Modifier.padding(bottom = 2.dp))
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(bottom = 2.dp)) {
+        Text(label, fontSize = 11.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFF6B7280), modifier = Modifier.weight(1f))
+        if (parsedJson != null) ViewToggle(tree = tree, onToggle = { tree = it })
+    }
 
+    if (parsedJson != null && tree) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color(0xFFF3F4F6), RoundedCornerShape(6.dp))
+                .horizontalScroll(rememberScrollState())
+                .padding(10.dp)
+        ) {
+            JsonTreeView(parsedJson)
+        }
+    } else {
+        RawBody(pretty)
+    }
+}
+
+/** Pretty-printed text body with a "View full body" expander for large payloads. */
+@Composable
+private fun RawBody(pretty: String) {
+    val isLarge = pretty.length > BODY_PREVIEW_LIMIT
+    var expanded by remember(pretty) { mutableStateOf(false) }
     val shown = if (isLarge && !expanded) pretty.take(BODY_PREVIEW_LIMIT) + "\n…" else pretty
     CodeBlock(shown)
-
     if (isLarge) {
         TextButton(
             onClick = { expanded = !expanded },
@@ -464,6 +487,34 @@ private fun BodyBlock(label: String, body: String?, contentType: String?, size: 
                 color = Color(0xFF2563EB)
             )
         }
+    }
+}
+
+@Composable
+private fun ViewToggle(tree: Boolean, onToggle: (Boolean) -> Unit) {
+    Row {
+        ToggleChip("Tree", selected = tree) { onToggle(true) }
+        Spacer(Modifier.width(4.dp))
+        ToggleChip("Raw", selected = !tree) { onToggle(false) }
+    }
+}
+
+@Composable
+private fun ToggleChip(text: String, selected: Boolean, onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .clickable(onClick = onClick)
+            .background(
+                if (selected) Color(0xFF2563EB) else Color(0xFFE5E7EB),
+                RoundedCornerShape(6.dp)
+            )
+            .padding(horizontal = 8.dp, vertical = 3.dp)
+    ) {
+        Text(
+            text = text,
+            fontSize = 11.sp,
+            color = if (selected) Color.White else Color(0xFF6B7280)
+        )
     }
 }
 
@@ -527,7 +578,7 @@ private fun buildDetailText(entry: NetworkLogEntry) = buildString {
     appendLine()
     if (entry.requestHeaders.isNotEmpty()) {
         appendLine("Headers:")
-        entry.requestHeaders.forEach { (k, v) -> appendLine("  $k: $v") }
+        entry.requestHeaders.forEach { (k, v) -> appendLine("  $k: ${Redactor.value(k, v)}") }
     }
     if (!entry.requestBody.isNullOrBlank()) {
         appendLine()
@@ -544,7 +595,7 @@ private fun buildDetailText(entry: NetworkLogEntry) = buildString {
         appendLine()
         if (entry.responseHeaders.isNotEmpty()) {
             appendLine("Headers:")
-            entry.responseHeaders.forEach { (k, v) -> appendLine("  $k: $v") }
+            entry.responseHeaders.forEach { (k, v) -> appendLine("  $k: ${Redactor.value(k, v)}") }
         }
         if (!entry.responseBody.isNullOrBlank()) {
             appendLine()

@@ -1,8 +1,10 @@
 package com.netlens.export
 
 import com.netlens.model.NetworkLogEntry
+import com.netlens.redact.Redactor
 import org.json.JSONArray
 import org.json.JSONObject
+import java.net.URI
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -38,8 +40,8 @@ internal object HarExporter {
             put("url", e.url)
             put("httpVersion", "HTTP/1.1")
             put("headers", headers(e.requestHeaders))
-            put("queryString", JSONArray())
-            put("cookies", JSONArray())
+            put("queryString", queryString(e.url))
+            put("cookies", requestCookies(e.requestHeaders))
             put("headersSize", -1)
             put("bodySize", e.requestBodySize)
             e.requestBody?.let {
@@ -53,7 +55,7 @@ internal object HarExporter {
             put("statusText", e.responseMessage)
             put("httpVersion", "HTTP/1.1")
             put("headers", headers(e.responseHeaders))
-            put("cookies", JSONArray())
+            put("cookies", responseCookies(e.responseHeaders))
             put("content", JSONObject().apply {
                 put("size", e.responseBodySize)
                 put("mimeType", e.responseContentType ?: "application/octet-stream")
@@ -72,6 +74,61 @@ internal object HarExporter {
     }
 
     private fun headers(map: Map<String, String>): JSONArray = JSONArray().also { arr ->
-        map.forEach { (k, v) -> arr.put(JSONObject().put("name", k).put("value", v)) }
+        map.forEach { (k, v) ->
+            arr.put(JSONObject().put("name", k).put("value", Redactor.value(k, v)))
+        }
     }
+
+    /** Parse `?a=1&b=2` from the URL into HAR `queryString` name/value pairs. */
+    private fun queryString(url: String): JSONArray = JSONArray().also { arr ->
+        val query = try { URI(url).rawQuery } catch (_: Exception) { null } ?: return@also
+        query.split("&").forEach { pair ->
+            if (pair.isEmpty()) return@forEach
+            val i = pair.indexOf('=')
+            val name = if (i >= 0) pair.substring(0, i) else pair
+            val value = if (i >= 0) pair.substring(i + 1) else ""
+            arr.put(JSONObject()
+                .put("name", decode(name))
+                .put("value", decode(value)))
+        }
+    }
+
+    /** Request `Cookie: a=1; b=2` header → HAR cookies (masked when sensitive). */
+    private fun requestCookies(map: Map<String, String>): JSONArray = JSONArray().also { arr ->
+        val cookie = header(map, "Cookie") ?: return@also
+        if (Redactor.isSensitive("Cookie")) {
+            arr.put(JSONObject().put("name", "Cookie").put("value", Redactor.MASK))
+            return@also
+        }
+        cookie.split(";").forEach { pair ->
+            val i = pair.indexOf('=')
+            if (i < 0) return@forEach
+            arr.put(JSONObject()
+                .put("name", pair.substring(0, i).trim())
+                .put("value", pair.substring(i + 1).trim()))
+        }
+    }
+
+    /** Response `Set-Cookie` header → HAR cookies (masked when sensitive). */
+    private fun responseCookies(map: Map<String, String>): JSONArray = JSONArray().also { arr ->
+        val setCookie = header(map, "Set-Cookie") ?: return@also
+        if (Redactor.isSensitive("Set-Cookie")) {
+            arr.put(JSONObject().put("name", "Set-Cookie").put("value", Redactor.MASK))
+            return@also
+        }
+        // First "name=value" segment is the cookie; the rest are attributes (path, etc.).
+        val first = setCookie.split(";").first()
+        val i = first.indexOf('=')
+        if (i >= 0) {
+            arr.put(JSONObject()
+                .put("name", first.substring(0, i).trim())
+                .put("value", first.substring(i + 1).trim()))
+        }
+    }
+
+    private fun header(map: Map<String, String>, name: String): String? =
+        map.entries.firstOrNull { it.key.equals(name, ignoreCase = true) }?.value
+
+    private fun decode(s: String): String =
+        try { java.net.URLDecoder.decode(s, "UTF-8") } catch (_: Exception) { s }
 }

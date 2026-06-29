@@ -6,7 +6,11 @@ import okhttp3.Interceptor
 import okhttp3.Response
 import okhttp3.internal.http.promisesBody
 import okio.Buffer
+import okio.GzipSource
+import okio.buffer
+import okio.inflate
 import java.nio.charset.Charset
+import java.util.zip.Inflater
 
 /**
  * OkHttp [Interceptor] that captures request/response pairs with zero impact
@@ -75,6 +79,7 @@ class NetLensInterceptor(
                 source.request(maxBodyBytes)
                 val peek = source.buffer.clone()
                 val declared = body.contentLength()
+                // respSize reflects bytes on the wire (possibly still compressed).
                 respSize = if (declared >= 0) declared else peek.size
                 when {
                     isImageContent(contentType) -> {
@@ -82,7 +87,8 @@ class NetLensInterceptor(
                         null
                     }
                     isTextContent(contentType) ->
-                        peek.readString(utf8).take(maxBodyBytes.toInt())
+                        decode(peek, response.header("Content-Encoding"))
+                            .readString(utf8).take(maxBodyBytes.toInt())
                     else -> null   // binary — labelled in the viewer, not decoded
                 }
             } else null
@@ -122,4 +128,19 @@ class NetLensInterceptor(
 
     private fun isImageContent(contentType: String?): Boolean =
         contentType?.lowercase()?.startsWith("image/") == true
+
+    /**
+     * Decompress a peeked body when the response declares `Content-Encoding`.
+     * OkHttp transparently decodes gzip it requested itself (and strips the
+     * header), so this only fires when the app set `Accept-Encoding` manually —
+     * without it those bodies would render as binary garbage. Returns the input
+     * unchanged on any failure (e.g. a truncated peek) so capture never breaks.
+     */
+    private fun decode(buffer: Buffer, encoding: String?): Buffer = try {
+        when (encoding?.lowercase()?.trim()) {
+            "gzip"    -> Buffer().apply { GzipSource(buffer).buffer().use { writeAll(it) } }
+            "deflate" -> Buffer().apply { buffer.inflate(Inflater()).buffer().use { writeAll(it) } }
+            else      -> buffer
+        }
+    } catch (_: Exception) { buffer }
 }

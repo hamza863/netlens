@@ -24,15 +24,21 @@ object NetworkLogStore {
     fun getAll(): List<NetworkLogEntry> = _logs.toList()
 
     /**
-     * Filter by URL substring, method, or status code prefix.
-     * e.g. filter("users"), filter("POST"), filter("4") → all 4xx
+     * Filter by URL, method, status, or anything in the headers/bodies.
+     * e.g. filter("users"), filter("POST"), filter("4") → all 4xx,
+     * filter("authorization"), filter("error-code-123") → body match.
      */
     fun filter(query: String): List<NetworkLogEntry> {
         val q = query.lowercase().trim()
+        if (q.isEmpty()) return _logs.toList()
         return _logs.filter { entry ->
             entry.url.lowercase().contains(q) ||
             entry.method.lowercase().contains(q) ||
-            entry.statusLabel.contains(q)
+            entry.statusLabel.lowercase().contains(q) ||
+            entry.requestBody?.lowercase()?.contains(q) == true ||
+            entry.responseBody?.lowercase()?.contains(q) == true ||
+            entry.requestHeaders.any { (k, v) -> k.lowercase().contains(q) || v.lowercase().contains(q) } ||
+            entry.responseHeaders.any { (k, v) -> k.lowercase().contains(q) || v.lowercase().contains(q) }
         }
     }
 

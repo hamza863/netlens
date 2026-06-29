@@ -44,11 +44,15 @@ data class NetworkLogEntry(
     val formattedReqSize: String  get() = formatBytes(requestBodySize)
     val formattedRespSize: String get() = formatBytes(responseBodySize)
 
-    /** Reconstruct this call as a runnable `curl` command. */
+    /**
+     * Reconstruct this call as a runnable `curl` command. Sensitive header values
+     * are masked (see [com.netlens.redact.Redactor]) so the output is safe to share.
+     */
     fun toCurl(): String = buildString {
         append("curl -X ").append(method)
         requestHeaders.forEach { (k, v) ->
-            append(" \\\n  -H '").append(k).append(": ").append(escapeQuote(v)).append("'")
+            val value = com.netlens.redact.Redactor.value(k, v)
+            append(" \\\n  -H '").append(k).append(": ").append(escapeQuote(value)).append("'")
         }
         if (!requestBody.isNullOrBlank()) {
             append(" \\\n  -d '").append(escapeQuote(requestBody)).append("'")

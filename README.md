@@ -24,7 +24,8 @@ NetLens captures requests **in memory** and renders them with **Jetpack Compose*
 | Storage | Room database (disk writes) | **In-memory only** |
 | Trigger | Notification tray | **Shake gesture / floating bubble** |
 | Response body | Consumes & re-wraps the stream | **Peeks only — stream untouched** |
-| Body formatting | JSON | **JSON · XML · form-urlencoded · image preview** |
+| Body formatting | JSON | **Collapsible JSON tree · XML · form-urlencoded · image preview** |
+| Safe sharing | — | **Auth/cookie headers redacted in cURL & HAR** |
 | Export | — | **cURL · HAR (DevTools-compatible)** |
 | Extra dependencies | Room, Notifications | **None** |
 | Release build | No-op variant | **No-op variant** |
@@ -37,8 +38,11 @@ NetLens captures requests **in memory** and renders them with **Jetpack Compose*
 - 🤳 **Shake to open** — or enable a draggable **floating bubble** (great for emulators).
 - ⚡ **Zero latency cost** — bodies are peeked via `Buffer.clone()`; Retrofit/Gson/Moshi parse as normal.
 - 🧠 **In-memory ring buffer** — keeps the last *N* calls, drops the oldest, never touches disk.
-- 🔎 **Search & filter** — free-text search plus quick chips (All / 2xx / 3xx / 4xx / 5xx / Failed).
+- 🔎 **Deep search & filter** — free-text search across URL, method, status, **headers and bodies**, plus quick chips (All / 2xx / 3xx / 4xx / 5xx / Failed).
 - 📊 **Session stats** — total calls, failures, and average duration at a glance.
+- 🌳 **Collapsible JSON tree** — explore JSON bodies as a tap-to-expand tree, or flip to **Raw** pretty-printed text per body.
+- 🔒 **Redacted sharing** — `Authorization`, `Cookie` and API-key headers are masked in cURL, HAR and shared text; configurable via `redactHeaders`.
+- 🗜️ **Compressed bodies** — gzip/deflate responses are decompressed for display.
 - 🎨 **Smart formatting** — pretty-prints JSON, XML and form-urlencoded; previews images; labels binary payloads instead of dumping mojibake.
 - 📦 **Large-body handling** — long payloads are truncated with a one-tap **“View full body.”**
 - 📋 **Copy as cURL** — reproduce any request in your terminal or Postman instantly.
@@ -65,8 +69,8 @@ dependencyResolutionManagement {
 
 ```kotlin
 dependencies {
-    debugImplementation("io.github.hamza863:netlens:1.1.4")
-    releaseImplementation("io.github.hamza863:netlens-no-op:1.1.4")
+    debugImplementation("io.github.hamza863:netlens:1.2.0")
+    releaseImplementation("io.github.hamza863:netlens-no-op:1.2.0")
 }
 ```
 
@@ -77,7 +81,7 @@ dependencies {
 
 ```toml
 [versions]
-netlens = "1.1.4"
+netlens = "1.2.0"
 
 [libraries]
 netlens      = { group = "io.github.hamza863", name = "netlens",       version.ref = "netlens" }
@@ -128,7 +132,10 @@ NetLens.install(
         showBubble     = false,   // show a draggable floating button
         maxEntries     = 200,     // calls kept in memory
         maxBodyBytes   = 64 * 1024, // max body captured per call (64 KB)
-        shakeThreshold = 12f      // shake sensitivity (lower = more sensitive)
+        shakeThreshold = 12f,     // shake sensitivity (lower = more sensitive)
+        redactHeaders  = setOf(   // header values masked in cURL / HAR / shared text
+            "Authorization", "Cookie", "Set-Cookie"
+        )
     )
 )
 ```
@@ -140,6 +147,7 @@ NetLens.install(
 | `maxEntries` | `200` | Number of calls retained in the in-memory buffer. |
 | `maxBodyBytes` | `65536` | Maximum request/response body size captured. |
 | `shakeThreshold` | `12f` | G-force above gravity that counts as a shake. |
+| `redactHeaders` | common auth/cookie headers | Header names whose values are masked in cURL, HAR and shared/copied text (the viewer still shows real values). |
 
 ---
 

@@ -49,8 +49,15 @@ class NetLensViewModel {
         val q = query.lowercase().trim()
         return entry.url.lowercase().contains(q) ||
                entry.method.lowercase().contains(q) ||
-               entry.statusLabel.lowercase().contains(q)
+               entry.statusLabel.lowercase().contains(q) ||
+               entry.requestBody?.lowercase()?.contains(q) == true ||
+               entry.responseBody?.lowercase()?.contains(q) == true ||
+               headersContain(entry.requestHeaders, q) ||
+               headersContain(entry.responseHeaders, q)
     }
+
+    private fun headersContain(headers: Map<String, String>, q: String): Boolean =
+        headers.any { (k, v) -> k.lowercase().contains(q) || v.lowercase().contains(q) }
 
     private fun statsOf(all: List<NetworkLogEntry>): NetLensState.Stats {
         if (all.isEmpty()) return NetLensState.Stats()
