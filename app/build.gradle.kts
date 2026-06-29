@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.netlens"
+    namespace = "com.netlens.demo"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -40,6 +40,12 @@ android {
 }
 
 dependencies {
+    // NetLens: use the local library module + the no-op for release builds,
+    // mirroring how a real consumer would depend on the published artifacts.
+    debugImplementation(project(":netlens"))
+    releaseImplementation(project(":netlens-no-op"))
+    implementation(libs.okhttp)
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)

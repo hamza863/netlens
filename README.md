@@ -11,6 +11,14 @@ Shake your device to inspect every API call in a clean, Compose-native bottom sh
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](#license)
 [![Compose](https://img.shields.io/badge/Jetpack%20Compose-100%25-4285F4.svg)](https://developer.android.com/jetpack/compose)
 
+<br/>
+
+<img src="assets/netlens-demo.gif" width="300" alt="NetLens demo — inspect API calls, search, browse the JSON tree, copy as cURL"/>
+
+<sub><i>Fire requests → open the inspector → search, drill into a call, browse the JSON tree, and copy as cURL.</i></sub>
+
+<br/><sub>▶️ <a href="https://github.com/hamza863/netlens/raw/main/assets/netlens-demo.mp4">Watch the full-quality MP4</a></sub>
+
 </div>
 
 ---
@@ -48,6 +56,18 @@ NetLens captures requests **in memory** and renders them with **Jetpack Compose*
 - 📋 **Copy as cURL** — reproduce any request in your terminal or Postman instantly.
 - 📤 **Export as HAR** — share a full session as a `.har` file that opens in Chrome DevTools, Charles or Proxyman.
 - 🚫 **Safe for release** — drop in the `no-op` variant and NetLens compiles to nothing.
+
+---
+
+## Screenshots
+
+<table>
+  <tr>
+    <td align="center"><img src="assets/screenshot-list.png" width="240"/><br/><sub><b>Call list</b> — color-coded status, method &amp; timing</sub></td>
+    <td align="center"><img src="assets/screenshot-detail.png" width="240"/><br/><sub><b>Detail</b> — headers &amp; collapsible JSON tree</sub></td>
+    <td align="center"><img src="assets/screenshot-search.png" width="240"/><br/><sub><b>Search</b> — filter across URL, headers &amp; bodies</sub></td>
+  </tr>
+</table>
 
 ---
 
